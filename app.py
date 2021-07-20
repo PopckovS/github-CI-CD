@@ -1,6 +1,12 @@
+from flask import Flask
 
-def func_1():
-    print('Hello world !')
+app = Flask(__name__)
 
 
-func_1()
+@app.route('/')
+def index():
+    return 'Hello World'
+
+
+if __name__ == "__main__":
+    app.run()
