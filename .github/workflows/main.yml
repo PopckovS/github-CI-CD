@@ -46,6 +46,7 @@ jobs:
   # Второе задание  
   my_deploy: 
     runs-on: ubuntu-18.04
+    needs: [my_testing]
     steps:
       - name: Print Message 2
         run: echo "Hello World from my_deploy"
