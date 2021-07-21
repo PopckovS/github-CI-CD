@@ -170,4 +170,97 @@ on:
 Можем увидеть что ключ SHA л добавлен к названию версии коммита.
 
 ---
+И так мы можем создавать таски, каждый таск запускается в своем 
+контейнере, но сам контейнер пуст, в нем отсутствует репозиторий
+самого проекта, для того чтобы скопировать наш проект в контейнер,
+сделать это можно след командой:
 
+```yaml
+   steps:
+      - name: Git clone my repo
+        uses: actions/checkout@v2
+```
+
+Такой командой мы копируем репозиторий в контейнер, и далее можем
+проверить это выводом все содержимого в контейнере `ls -la`
+
+Также заодно проверим, находится ли в контейнере, сервис AWS
+от Amazon, и библиотека zip, сделаем все это следующими тасками.
+
+```yaml
+  my_testing:
+    
+    runs-on: ubuntu-18.04
+    
+    steps:
+
+      - name: Print Message 1
+        run: echo "Hello World from my_testing"
+
+      - name: Print APPLICATION_NAME
+        run: |
+          echo "Hello 1"
+          echo "Hello 2"
+          echo "APPLICATION_NAME: ${{env.APPLICATION_NAME}}"
+
+      - name: List current folder before clone
+        run: ls -la
+
+      - name: Git clone my repo
+        uses: actions/checkout@v2
+
+      - name: List current folder after clone
+        run: ls -la
+
+      - name: Test some package if the are here №1
+        run: aws --version
+
+      - name: Test some package if the are here №2
+        run: zip
+```
+
+Можем увидеть что репозиторий скопирован в контейнер.
+
+![](img/5.png)
+
+---
+
+Также помимо использование переменных, что были определены для 
+Actions, есть возможность создавать свои локальные переменные 
+для каждого из заданий, и обращаться к ним также `${{env.VAR1}}`
+и даже создавать еще более локальные переменные для каждого
+из шагов внутри задания, к ним обращение отличается, выглядит 
+как $LOCAL_VAR
+
+```yaml
+  my_deploy: 
+    runs-on: ubuntu-18.04
+    needs: [my_testing]
+
+    # Локальные переменные работающие только внутри этого задания
+    env:
+      VAR1: "This is job Level Variable 1"
+      VAR2: "This is job Level Variable 2"
+
+    steps:
+
+      - name: Print Message 2
+        run: echo "Hello World from my_deploy"
+
+      # Локальные переменные для каждого из заданий пишутся как:
+      # ${{env.VAR1}}
+      # Супер локальные переменные пишутся как: $LOCAL_VAR
+      - name: Print LOCAL VAR
+        env:
+          LOCAL_VAR: "This is Super local Environment variable."
+        run: |
+          echo "VAR1 = ${{env.VAR1}}"
+          echo "VAR2 = ${{env.VAR2}}"
+          echo "LOCAL_VAR = $LOCAL_VAR"
+
+      - name: Print DEPLOY_PACKAGE_NAME
+        run: |
+          echo "Hello 3"
+          echo "Hello 4"
+          echo "DEPLOY_PACKAGE_NAME : ${{env.DEPLOY_PACKAGE_NAME}}"
+```

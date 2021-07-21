@@ -92,9 +92,27 @@ jobs:
   my_deploy: 
     runs-on: ubuntu-18.04
     needs: [my_testing]
+
+    # Локальные переменные работающие только внутри этого задания
+    env:
+      VAR1: "This is job Level Variable 1"
+      VAR2: "This is job Level Variable 2"
+
     steps:
+
       - name: Print Message 2
         run: echo "Hello World from my_deploy"
+
+      # Локальные переменные для каждого из заданий пишутся как:
+      # ${{env.VAR1}}
+      # Супер локальные переменные пишутся как: $LOCAL_VAR
+      - name: Print LOCAL VAR
+        env:
+          LOCAL_VAR: "This is Super local Environment variable."
+        run: |
+          echo "VAR1 = ${{env.VAR1}}"
+          echo "VAR2 = ${{env.VAR2}}"
+          echo "LOCAL_VAR = $LOCAL_VAR"
 
       - name: Print DEPLOY_PACKAGE_NAME
         run: |
