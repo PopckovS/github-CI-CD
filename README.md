@@ -83,6 +83,80 @@ jobs:
 При `push` в репозиторий, сработает `Actions` и все процессы выполнения
 заданий с выводом результатов команд, можно будет увидеть в отладке.
 
+При этом по дефолту каждое из заданий будет выполнятся в своем образе 
+`Docker`, и параллельно друг другу, чтобы это изменить, мы можем указать 
+определенному заданию, после какого именно задания ему следует быть
+выполненным, для этого добавим параметр `needs: [название_таска]`.
 
+```yaml
+  my_deploy: 
+    runs-on: ubuntu-18.04
+    # Выполнить задание my_deploy после выполнения задания my_testing
+    needs: [my_testing]
+    steps:
+      - name: Print Message 2
+        run: echo "Hello World from my_deploy"
+```
+
+Тогда при обработке задания, можно увидеть в отладке, как связаны таски
+между собой, по порядку выполнения.
+
+![](img/1.png)
+
+Сразу после выполнения заданий, можно увидеть как задания помечаются
+как выполненные.
+
+![](img/2.png)
+
+---
+Добавим переменные окружения, делается это в блоке `env` который 
+определяется на верхнем уровне файла `YAML`, добавим этот блок, 
+в этом блоке мы можем определять свои собственные переменные, 
+но можем добавлять к ним и специальные зарегистрированные переменные,
+что определены в самом `Github`.
+
+К примеру `${{github.sha}}` позволяет обратится к уникальному `SHA`
+ключу, который генерируется специально для каждого коммита, на основе
+суммы всех хешированных изменений сделанных в этом коммите.
+
+```yaml
+name: My-Actions-1
+
+env:
+  APPLICATION_NAME: "MyFlask"
+  DEPLOY_PACKAGE_NAME: "flask_deploy_version-${{github.sha}}"
+
+on:
+  push:
+    branches: [ main ]
+```
+
+Эти специальные переменные можно использовать прямо в заданиях,
+обращаясь к ним следующим образом `${{env.APPLICATION_NAME}}`
+
+```yaml
+  my_testing:
+    runs-on: ubuntu-18.04   
+    steps:
+      - name: Print Message 1
+        run: echo "Hello World from my_testing"
+      - name: Print APPLICATION_NAME
+        run: |
+          echo "Hello 1"
+          echo "Hello 2"
+          echo "APPLICATION_NAME: ${{env.APPLICATION_NAME}}"
+
+  my_deploy: 
+    runs-on: ubuntu-18.04
+    needs: [my_testing]
+    steps:
+      - name: Print Message 2
+        run: echo "Hello World from my_deploy"
+      - name: Print DEPLOY_PACKAGE_NAME
+        run: |
+          echo "Hello 3"
+          echo "Hello 4"
+          echo "DEPLOY_PACKAGE_NAME : ${{env.DEPLOY_PACKAGE_NAME}}"
+```
 
 

@@ -7,6 +7,16 @@
 # В отличии от названия файла, название "name" имеет значение,
 name: My-Actions-1
 
+# Блок для хранения настроек, и глобальных переменных которые
+# далее можно использовать в заданиях.
+# ${{github.sha}} - Доступ к уникальному SHA который генерируется
+# специально для каждого коммита.
+env:
+  # Дали название проекту
+  APPLICATION_NAME: "MyFlask"
+  # Назвали пакет
+  DEPLOY_PACKAGE_NAME: "flask_deploy_version-${{github.sha}}"
+
 
 # ===== Когда запускать ======
 # Контролирует когда будет запускаться этот файл, на "push" или
@@ -41,7 +51,14 @@ jobs:
       - name: Print Message 1
         # Действие внутри конкретного шага, по сути пишим обычный shell         
         run: echo "Hello World from my_testing"
-        
+
+      # Обращение к глобальным переменным что определены в блоке env
+      # делается так: ${{env.APPLICATION_NAME}}
+      - name: Print APPLICATION_NAME
+        run: |
+          echo "Hello 1"
+          echo "Hello 2"
+          echo "APPLICATION_NAME: ${{env.APPLICATION_NAME}}"
 
   # Второе задание  
   my_deploy: 
@@ -51,6 +68,11 @@ jobs:
       - name: Print Message 2
         run: echo "Hello World from my_deploy"
 
+      - name: Print DEPLOY_PACKAGE_NAME
+        run: |
+          echo "Hello 3"
+          echo "Hello 4"
+          echo "DEPLOY_PACKAGE_NAME : ${{env.DEPLOY_PACKAGE_NAME}}"
 
 
 
