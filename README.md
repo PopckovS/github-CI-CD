@@ -1,5 +1,7 @@
 github-CI-CD
 ---
+![Статус тестов/сборки CI CD](https://github.com/PopckovS/github-CI-CD/actions/workflows/main.yml/badge.svg?branch=main)
+
 Данный репозиторий создан для тестирования работы CI / CD
 
 ---
@@ -264,3 +266,4 @@ Actions, есть возможность создавать свои локал�
           echo "Hello 4"
           echo "DEPLOY_PACKAGE_NAME : ${{env.DEPLOY_PACKAGE_NAME}}"
 ```
+---
