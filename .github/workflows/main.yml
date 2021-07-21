@@ -47,6 +47,7 @@ jobs:
 
     # Шаги для работы в задании.   
     steps:
+
       # Название конкретного шага
       - name: Print Message 1
         # Действие внутри конкретного шага, по сути пишим обычный shell         
@@ -59,6 +60,33 @@ jobs:
           echo "Hello 1"
           echo "Hello 2"
           echo "APPLICATION_NAME: ${{env.APPLICATION_NAME}}"
+
+      # Новое задание, для показа содержания директории, в результате
+      # мы ничего не увидим, потому что наш репозиторий хоть и создан
+      # но не закинут в контейнер докера.
+      - name: List current folder before clone
+        run: ls -la
+
+      # Новое задание на копирование нашего репозитория в контейнер
+      # докера, сделать это можно при помощи специального зарезервированной
+      # команды "action/checkout@v1"
+      - name: Git clone my repo
+        run: action/checkout@v1
+
+      # нова запускаем команду на просмотр содержимого и увидим что
+      # все репозитории были скопированы.
+      - name: List current folder after clone
+        run: ls -la
+
+      # Добавили команду для просмотра есть ли тут сервис
+      # AWS от Amazon, есть ли он в контейнере по дефолту ?
+      - name: Test some package if the are here №1
+        run: aws --version
+
+      # Добавили команду для просмотра есть ли тут библиотека zip
+      - name: Test some package if the are here №2
+        run: zip
+
 
   # Второе задание  
   my_deploy: 

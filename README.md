@@ -159,4 +159,15 @@ on:
           echo "DEPLOY_PACKAGE_NAME : ${{env.DEPLOY_PACKAGE_NAME}}"
 ```
 
+Результат работы новых тасков:
+
+Работа таска `Print Message 1` и `Print APPLICATION_NAME`
+![](img/3.png)
+
+Работа таска `Print Message 2` и `Print DEPLOY_PACKAGE_NAME`
+![](img/4.png)
+
+Можем увидеть что ключ SHA л добавлен к названию версии коммита.
+
+---
 
